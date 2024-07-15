@@ -1,0 +1,96 @@
+#include <iostream>
+#include <stack>
+
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+};
+
+// Function to insert a new node into the BST
+TreeNode* insert(TreeNode* root, int val) {
+    if (root == nullptr) return new TreeNode(val);
+    if (val < root->val)
+        root->left = insert(root->left, val);
+    else
+        root->right = insert(root->right, val);
+    return root;
+}
+
+// Function to find the kth smallest value in the BST
+int kthSmallest(TreeNode* root, int k) {
+    std::stack<TreeNode*> stack;
+    TreeNode* current = root;
+    int count = 0;
+
+    // Traverse the BST in inorder using a stack
+    while (current != nullptr || !stack.empty()) {
+        // Reach the leftmost node of the current subtree
+        while (current != nullptr) {
+            stack.push(current);
+            current = current->left;
+        }
+        // Pop the top node from the stack (which is the smallest so far)
+        current = stack.top();
+        stack.pop();
+        count++;
+        // Check if this is the kth smallest node
+        if (count == k) return current->val;
+        // Move to the right subtree to continue inorder traversal
+        current = current->right;
+    }
+    return -1; // Return -1 if k is out of bounds of the BST
+}
+
+// Function to free memory allocated for the tree
+void freeTree(TreeNode* root) {
+    if (root != nullptr) {
+        freeTree(root->left);
+        freeTree(root->right);
+        delete root;
+    }
+}
+
+int main() {
+    // Create a tree for testing
+    TreeNode* root = nullptr;
+    root = insert(root, 5);
+    root = insert(root, 3);
+    root = insert(root, 6);
+    root = insert(root, 2);
+    root = insert(root, 4);
+    root = insert(root, 1);
+
+    // Example from the problem statement
+    std::cout << "Example 1:" << std::endl;
+    TreeNode* example1 = nullptr;
+    example1 = insert(example1, 3);
+    example1 = insert(example1, 1);
+    example1 = insert(example1, 4);
+    example1 = insert(example1, 2);
+    int k1 = 1;
+    std::cout << "Input: k = " << k1 << std::endl;
+    std::cout << "Output: " << kthSmallest(example1, k1) << std::endl;
+
+    std::cout << std::endl;
+
+    std::cout << "Example 2:" << std::endl;
+    TreeNode* example2 = nullptr;
+    example2 = insert(example2, 5);
+    example2 = insert(example2, 3);
+    example2 = insert(example2, 6);
+    example2 = insert(example2, 2);
+    example2 = insert(example2, 4);
+    example2 = insert(example2, 1);
+    int k2 = 3;
+    std::cout << "Input: k = " << k2 << std::endl;
+    std::cout << "Output: " << kthSmallest(example2, k2) << std::endl;
+
+    // Free allocated memory
+    freeTree(root);
+    freeTree(example1);
+    freeTree(example2);
+
+    return 0;
+}
