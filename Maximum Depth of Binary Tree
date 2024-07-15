@@ -1,0 +1,55 @@
+#include <iostream>
+#include <queue>
+using namespace std;
+
+struct TreeNode {
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
+TreeNode* insertLevelOrder(int arr[], int i, int n) {
+    TreeNode* root = nullptr;
+    if (i < n) {
+        root = new TreeNode(arr[i]);
+        root->left = insertLevelOrder(arr, 2 * i + 1, n);
+        root->right = insertLevelOrder(arr, 2 * i + 2, n);
+    }
+    return root;
+}
+
+int maxDepth(TreeNode* root) {
+    if (root == NULL)
+        return 0;
+    else {
+        int leftDepth = maxDepth(root->left);
+        int rightDepth = maxDepth(root->right);
+        return (leftDepth > rightDepth ? leftDepth : rightDepth) + 1;
+    }
+}
+
+int main() {
+    int n;
+    cout << "Enter the number of elements in the tree: ";
+    cin >> n;
+
+    int* arr = new int[n];
+    cout << "Enter the elements of the tree (use -1 for NULL nodes): ";
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+    }
+
+    // Convert -1 to NULL in the tree representation
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == -1) {
+            arr[i] = NULL;
+        }
+    }
+
+    TreeNode* root = insertLevelOrder(arr, 0, n);
+    cout << "The maximum depth of the binary tree is: " << maxDepth(root) << endl;
+
+    delete[] arr;
+    return 0;
+}
