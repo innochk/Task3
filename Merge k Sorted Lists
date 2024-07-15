@@ -1,0 +1,93 @@
+#include <iostream>
+using namespace std;
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
+// Function to merge two sorted linked lists
+ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+    ListNode dummy(0);
+    ListNode* tail = &dummy;
+
+    while (l1 && l2) {
+        if (l1->val <= l2->val) {
+            tail->next = l1;
+            l1 = l1->next;
+        } else {
+            tail->next = l2;
+            l2 = l2->next;
+        }
+        tail = tail->next;
+    }
+
+    if (l1)
+        tail->next = l1;
+    if (l2)
+        tail->next = l2;
+
+    return dummy.next;
+}
+
+// Function to merge k sorted linked lists
+ListNode* mergeKLists(vector<ListNode*>& lists) {
+    int k = lists.size();
+    if (k == 0) return nullptr;
+    
+    while (k > 1) {
+        int mid = (k + 1) / 2;
+        for (int i = 0; i < k / 2; ++i) {
+            lists[i] = mergeTwoLists(lists[i], lists[i + mid]);
+        }
+        k = mid;
+    }
+    
+    return lists[0];
+}
+
+// Function to create a linked list from an array
+ListNode* createLinkedList(vector<int>& arr) {
+    ListNode dummy(0);
+    ListNode* tail = &dummy;
+    for (int num : arr) {
+        tail->next = new ListNode(num);
+        tail = tail->next;
+    }
+    return dummy.next;
+}
+
+// Function to print a linked list
+void printList(ListNode* head) {
+    while (head) {
+        cout << head->val << " ";
+        head = head->next;
+    }
+    cout << endl;
+}
+
+int main() {
+    int k;
+    cout << "Enter the number of sorted linked lists: ";
+    cin >> k;
+
+    vector<ListNode*> lists;
+    for (int i = 0; i < k; ++i) {
+        cout << "Enter sorted list " << i+1 << " elements (enter -1 to end): ";
+        vector<int> arr;
+        int num;
+        while (cin >> num && num != -1) {
+            arr.push_back(num);
+        }
+        lists.push_back(createLinkedList(arr));
+    }
+
+    ListNode* mergedList = mergeKLists(lists);
+    
+    cout << "Merged sorted list: ";
+    printList(mergedList);
+
+    return 0;
+}
