@@ -1,0 +1,61 @@
+#include <iostream>
+#include <stack>
+using namespace std;
+
+// Definition for a binary tree node.
+struct TreeNode {
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+};
+
+// Function to perform inorder traversal without using <algorithm>
+vector<int> inorderTraversal(TreeNode* root) {
+    vector<int> result;
+    stack<TreeNode*> s;
+    TreeNode* current = root;
+
+    while (current != nullptr || !s.empty()) {
+        while (current != nullptr) {
+            s.push(current);
+            current = current->left;
+        }
+        current = s.top();
+        s.pop();
+        result.push_back(current->val);
+        current = current->right;
+    }
+
+    return result;
+}
+
+// Function to build a binary tree from input values
+TreeNode* buildTree() {
+    int val;
+    cin >> val;
+    if (val == -1) { // assuming -1 denotes null node
+        return nullptr;
+    }
+    TreeNode* root = new TreeNode(val);
+    cout << "Enter left child of " << val << " (-1 for null): ";
+    root->left = buildTree();
+    cout << "Enter right child of " << val << " (-1 for null): ";
+    root->right = buildTree();
+    return root;
+}
+
+int main() {
+    cout << "Enter the root value (-1 for null): ";
+    TreeNode* root = buildTree();
+
+    vector<int> result = inorderTraversal(root);
+
+    cout << "Inorder traversal result: ";
+    for (int num : result) {
+        cout << num << " ";
+    }
+    cout << endl;
+
+    return 0;
+}
