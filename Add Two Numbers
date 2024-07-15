@@ -1,0 +1,85 @@
+#include <iostream>
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    ListNode* next;
+    ListNode(int x) : val(x), next(nullptr) {}
+};
+
+ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+    ListNode* dummyHead = new ListNode(0);
+    ListNode* p = l1, * q = l2, * curr = dummyHead;
+    int carry = 0;
+    while (p != nullptr || q != nullptr) {
+        int x = (p != nullptr) ? p->val : 0;
+        int y = (q != nullptr) ? q->val : 0;
+        int sum = carry + x + y;
+        carry = sum / 10;
+        curr->next = new ListNode(sum % 10);
+        curr = curr->next;
+        if (p != nullptr) p = p->next;
+        if (q != nullptr) q = q->next;
+    }
+    if (carry > 0) {
+        curr->next = new ListNode(carry);
+    }
+    return dummyHead->next;
+}
+
+// Helper function to create a linked list from an array
+ListNode* createList(int arr[], int size) {
+    if (size == 0) return nullptr;
+    ListNode* head = new ListNode(arr[0]);
+    ListNode* current = head;
+    for (int i = 1; i < size; i++) {
+        current->next = new ListNode(arr[i]);
+        current = current->next;
+    }
+    return head;
+}
+
+// Helper function to print a linked list
+void printList(ListNode* node) {
+    while (node != nullptr) {
+        std::cout << node->val;
+        if (node->next != nullptr) std::cout << " -> ";
+        node = node->next;
+    }
+    std::cout << std::endl;
+}
+
+// Helper function to read a linked list from input
+ListNode* readList() {
+    int n;
+    std::cout << "Enter number of elements in the list: ";
+    std::cin >> n;
+    if (n == 0) return nullptr;
+    
+    int val;
+    std::cout << "Enter elements: ";
+    std::cin >> val;
+    ListNode* head = new ListNode(val);
+    ListNode* current = head;
+    for (int i = 1; i < n; i++) {
+        std::cin >> val;
+        current->next = new ListNode(val);
+        current = current->next;
+    }
+    return head;
+}
+
+int main() {
+    std::cout << "Input list 1:" << std::endl;
+    ListNode* l1 = readList();
+    
+    std::cout << "Input list 2:" << std::endl;
+    ListNode* l2 = readList();
+    
+    ListNode* result = addTwoNumbers(l1, l2);
+    
+    std::cout << "Result: ";
+    printList(result);
+
+    return 0;
+}
