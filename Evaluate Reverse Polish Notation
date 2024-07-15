@@ -1,0 +1,51 @@
+#include <iostream>
+#include <stack>
+#include <string>
+
+using namespace std;
+
+int evaluateRPN(vector<string>& tokens) {
+    stack<int> operands;
+    
+    for (const string& token : tokens) {
+        if (token == "+") {
+            int operand2 = operands.top(); operands.pop();
+            int operand1 = operands.top(); operands.pop();
+            operands.push(operand1 + operand2);
+        } else if (token == "-") {
+            int operand2 = operands.top(); operands.pop();
+            int operand1 = operands.top(); operands.pop();
+            operands.push(operand1 - operand2);
+        } else if (token == "*") {
+            int operand2 = operands.top(); operands.pop();
+            int operand1 = operands.top(); operands.pop();
+            operands.push(operand1 * operand2);
+        } else if (token == "/") {
+            int operand2 = operands.top(); operands.pop();
+            int operand1 = operands.top(); operands.pop();
+            operands.push(operand1 / operand2); // Integer division truncates towards zero
+        } else {
+            // It's a number
+            operands.push(stoi(token));
+        }
+    }
+    
+    return operands.top();
+}
+
+int main() {
+    vector<string> tokens;
+    string token;
+
+    // Reading tokens from keyboard input
+    cout << "Enter tokens (enter 'done' to finish input):\n";
+    while (cin >> token && token != "done") {
+        tokens.push_back(token);
+    }
+
+    // Evaluate RPN expression
+    int result = evaluateRPN(tokens);
+    cout << "Result: " << result << endl;
+
+    return 0;
+}
