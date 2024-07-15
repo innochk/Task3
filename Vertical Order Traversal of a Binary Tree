@@ -1,0 +1,100 @@
+#include <iostream>
+#include <map>
+#include <queue>
+#include <vector>
+
+using namespace std;
+
+// Definition for a binary tree node.
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+};
+
+// Function to perform vertical order traversal
+vector<vector<int>> verticalTraversal(TreeNode* root) {
+    if (!root) return {};
+    
+    // Column to nodes mapping
+    map<int, vector<int>> columnMap;
+    
+    // Queue to perform BFS
+    queue<pair<TreeNode*, int>> q;
+    q.push({root, 0});
+    
+    // BFS traversal
+    while (!q.empty()) {
+        int size = q.size();
+        map<int, vector<int>> levelMap;
+        
+        for (int i = 0; i < size; ++i) {
+            auto [node, col] = q.front();
+            q.pop();
+            
+            // Add node value to the corresponding column
+            levelMap[col].push_back(node->val);
+            
+            // Enqueue left child with adjusted column
+            if (node->left) {
+                q.push({node->left, col - 1});
+            }
+            
+            // Enqueue right child with adjusted column
+            if (node->right) {
+                q.push({node->right, col + 1});
+            }
+        }
+        
+        // Merge level map into column map
+        for (auto& entry : levelMap) {
+            int col = entry.first;
+            vector<int>& nodes = entry.second;
+            // Sort nodes in the same column by their values
+            sort(nodes.begin(), nodes.end());
+            // Append to the column map
+            columnMap[col].insert(columnMap[col].end(), nodes.begin(), nodes.end());
+        }
+    }
+    
+    // Prepare result from column map
+    vector<vector<int>> result;
+    for (auto& entry : columnMap) {
+        result.push_back(entry.second);
+    }
+    
+    return result;
+}
+
+// Function to build a binary tree from input
+TreeNode* buildTree() {
+    int val;
+    cin >> val;
+    if (val == -1) {
+        return nullptr; // -1 indicates null node
+    }
+    TreeNode* root = new TreeNode(val);
+    root->left = buildTree();
+    root->right = buildTree();
+    return root;
+}
+
+int main() {
+    cout << "Enter the values for the binary tree (enter -1 for null nodes):" << endl;
+    TreeNode* root = buildTree();
+
+    vector<vector<int>> result = verticalTraversal(root);
+
+    // Output the result
+    cout << "Vertical order traversal result:" << endl;
+    for (auto& vec : result) {
+        cout << "[";
+        for (int val : vec) {
+            cout << val << " ";
+        }
+        cout << "]" << endl;
+    }
+
+    return 0;
+}
