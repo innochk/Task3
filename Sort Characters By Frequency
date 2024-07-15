@@ -1,0 +1,43 @@
+#include <iostream>
+using namespace std;
+
+const int MAX_CHAR = 256; // Assuming ASCII characters
+
+string frequencySort(string s) {
+    // Step 1: Count frequencies of each character
+    int freq[MAX_CHAR] = {0};
+    for (char c : s) {
+        freq[c]++;
+    }
+    
+    // Step 2: Sort characters based on frequency (descending order)
+    for (int i = 0; i < MAX_CHAR - 1; ++i) {
+        for (int j = i + 1; j < MAX_CHAR; ++j) {
+            if (freq[i] < freq[j]) {
+                swap(freq[i], freq[j]);
+                swap((char)i, (char)j);
+            }
+        }
+    }
+    
+    // Step 3: Construct the resulting string
+    string result = "";
+    for (int i = 0; i < MAX_CHAR; ++i) {
+        if (freq[i] > 0) {
+            result += string(freq[i], (char)i);
+        }
+    }
+    
+    return result;
+}
+
+int main() {
+    string s;
+    cout << "Enter a string: ";
+    cin >> s;
+    
+    string sortedString = frequencySort(s);
+    cout << "Sorted string in decreasing order of character frequency: " << sortedString << endl;
+    
+    return 0;
+}
