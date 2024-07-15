@@ -1,0 +1,62 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+class MyHashMap {
+private:
+    static const int SIZE = 1000; // Define the size of the hash table
+    vector<vector<pair<int, int>>> table; // Vector of vectors to handle collisions
+
+    int hash(int key) {
+        return key % SIZE; // Hash function to map keys to the hash table
+    }
+
+public:
+    MyHashMap() {
+        table.resize(SIZE); // Initialize the hash table with empty vectors
+    }
+
+    void put(int key, int value) {
+        int hashedKey = hash(key);
+        for (auto &pair : table[hashedKey]) {
+            if (pair.first == key) {
+                pair.second = value;
+                return;
+            }
+        }
+        table[hashedKey].emplace_back(key, value);
+    }
+
+    int get(int key) {
+        int hashedKey = hash(key);
+        for (const auto &pair : table[hashedKey]) {
+            if (pair.first == key) {
+                return pair.second;
+            }
+        }
+        return -1; // Return -1 if the key is not found
+    }
+
+    void remove(int key) {
+        int hashedKey = hash(key);
+        for (auto it = table[hashedKey].begin(); it != table[hashedKey].end(); ++it) {
+            if (it->first == key) {
+                table[hashedKey].erase(it);
+                return;
+            }
+        }
+    }
+};
+
+int main() {
+    MyHashMap myHashMap;
+    myHashMap.put(1, 1);
+    myHashMap.put(2, 2);
+    cout << myHashMap.get(1) << endl;    // returns 1
+    cout << myHashMap.get(3) << endl;    // returns -1 (not found)
+    myHashMap.put(2, 1);                // update the existing value
+    cout << myHashMap.get(2) << endl;    // returns 1 
+    myHashMap.remove(2);                // remove the mapping for 2
+    cout << myHashMap.get(2) << endl;    // returns -1 (not found)
+    return 0;
+}
