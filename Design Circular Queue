@@ -1,0 +1,137 @@
+#include <iostream>
+using namespace std;
+
+class MyCircularQueue {
+private:
+    int* data;
+    int front;
+    int rear;
+    int size;
+    int count;
+
+public:
+    MyCircularQueue(int k) {
+        size = k;
+        data = new int[size];
+        front = 0;
+        rear = -1;
+        count = 0;
+    }
+    
+    ~MyCircularQueue() {
+        delete[] data;
+    }
+    
+    int Front() {
+        if (isEmpty()) {
+            return -1;
+        }
+        return data[front];
+    }
+    
+    int Rear() {
+        if (isEmpty()) {
+            return -1;
+        }
+        return data[rear];
+    }
+    
+    bool enQueue(int value) {
+        if (isFull()) {
+            return false;
+        }
+        rear = (rear + 1) % size;
+        data[rear] = value;
+        count++;
+        return true;
+    }
+    
+    bool deQueue() {
+        if (isEmpty()) {
+            return false;
+        }
+        front = (front + 1) % size;
+        count--;
+        return true;
+    }
+    
+    bool isEmpty() {
+        return count == 0;
+    }
+    
+    bool isFull() {
+        return count == size;
+    }
+};
+
+int main() {
+    int k;
+    cout << "Enter size of circular queue: ";
+    cin >> k;
+    
+    MyCircularQueue myCircularQueue(k);
+    
+    int option;
+    do {
+        cout << "\nCircular Queue Operations\n";
+        cout << "-------------------------\n";
+        cout << "1. Front\n";
+        cout << "2. Rear\n";
+        cout << "3. enQueue\n";
+        cout << "4. deQueue\n";
+        cout << "5. isEmpty\n";
+        cout << "6. isFull\n";
+        cout << "7. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> option;
+        
+        switch(option) {
+            case 1:
+                cout << "Front of the queue: " << myCircularQueue.Front() << endl;
+                break;
+            case 2:
+                cout << "Rear of the queue: " << myCircularQueue.Rear() << endl;
+                break;
+            case 3:
+                int value;
+                cout << "Enter value to enqueue: ";
+                cin >> value;
+                if (myCircularQueue.enQueue(value)) {
+                    cout << "Enqueued successfully.\n";
+                } else {
+                    cout << "Queue is full. Enqueue failed.\n";
+                }
+                break;
+            case 4:
+                if (myCircularQueue.deQueue()) {
+                    cout << "Dequeued successfully.\n";
+                } else {
+                    cout << "Queue is empty. Dequeue failed.\n";
+                }
+                break;
+            case 5:
+                if (myCircularQueue.isEmpty()) {
+                    cout << "Queue is empty.\n";
+                } else {
+                    cout << "Queue is not empty.\n";
+                }
+                break;
+            case 6:
+                if (myCircularQueue.isFull()) {
+                    cout << "Queue is full.\n";
+                } else {
+                    cout << "Queue is not full.\n";
+                }
+                break;
+            case 7:
+                cout << "Exiting...\n";
+                break;
+            default:
+                cout << "Invalid option. Please try again.\n";
+                break;
+        }
+        
+    } while (option != 7);
+    
+    return 0;
+}
