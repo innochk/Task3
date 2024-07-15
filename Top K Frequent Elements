@@ -1,0 +1,81 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+// Structure to store frequency and number pairs
+struct FreqPair {
+    int frequency;
+    int number;
+    
+    FreqPair(int f, int n) : frequency(f), number(n) {}
+    
+    // Overloading operator < for min heap comparison
+    bool operator<(const FreqPair& other) const {
+        return frequency > other.frequency; // Min heap based on frequency
+    }
+};
+
+vector<int> topKFrequent(vector<int>& nums, int k) {
+    // Step 1: Determine the range of values in nums to use in counting array
+    int maxNum = *max_element(nums.begin(), nums.end());
+    int minNum = *min_element(nums.begin(), nums.end());
+    
+    // Step 2: Create counting array for frequencies
+    int range = maxNum - minNum + 1;
+    vector<int> freq(range, 0);
+    
+    // Count frequencies of each number
+    for (int num : nums) {
+        freq[num - minNum]++;
+    }
+    
+    // Step 3: Create min heap to store top k frequent elements
+    priority_queue<FreqPair> minHeap;
+    
+    // Insert elements into min heap based on frequency
+    for (int i = 0; i < range; ++i) {
+        if (freq[i] > 0) {
+            minHeap.push(FreqPair(freq[i], i + minNum));
+            if (minHeap.size() > k) {
+                minHeap.pop(); // Maintain k elements in the heap
+            }
+        }
+    }
+    
+    // Step 4: Extract elements from min heap to result vector
+    vector<int> result;
+    while (!minHeap.empty()) {
+        result.push_back(minHeap.top().number);
+        minHeap.pop();
+    }
+    
+    return result;
+}
+
+int main() {
+    // Input handling
+    int n, k;
+    cout << "Enter the number of elements: ";
+    cin >> n;
+    vector<int> nums(n);
+    cout << "Enter the elements:\n";
+    for (int i = 0; i < n; ++i) {
+        cin >> nums[i];
+    }
+    cout << "Enter k: ";
+    cin >> k;
+    
+    // Find k most frequent elements
+    vector<int> result = topKFrequent(nums, k);
+    
+    // Output the result
+    cout << "Top " << k << " most frequent elements:";
+    for (int num : result) {
+        cout << " " << num;
+    }
+    cout << endl;
+    
+    return 0;
+}
