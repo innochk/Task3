@@ -1,0 +1,62 @@
+#include <iostream>
+#include <queue> // for std::queue
+
+// Definition of a binary tree node structure
+struct TreeNode {
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+};
+
+// Function to insert a node into a binary search tree
+void insert(TreeNode*& root, int val) {
+    if (root == nullptr) {
+        root = new TreeNode(val);
+        return;
+    }
+    if (val < root->val) {
+        insert(root->left, val);
+    } else {
+        insert(root->right, val);
+    }
+}
+
+// Function to perform right-to-left level order traversal
+// and collect visible nodes from the right side
+void rightSideView(TreeNode* root, std::vector<int>& result, int depth) {
+    if (root == nullptr) return;
+    // If current depth is equal to the size of result vector,
+    // add current node's value to the result vector
+    if (depth >= result.size()) {
+        result.push_back(root->val);
+    }
+    // Recursively traverse right subtree first
+    rightSideView(root->right, result, depth + 1);
+    // Then traverse left subtree
+    rightSideView(root->left, result, depth + 1);
+}
+
+int main() {
+    TreeNode* root = nullptr;
+    int val;
+    
+    // Input values to construct the binary search tree
+    std::cout << "Enter values to build the binary search tree (enter -1 to finish):" << std::endl;
+    while (std::cin >> val && val != -1) {
+        insert(root, val);
+    }
+    
+    // Collect visible values from the right side
+    std::vector<int> result;
+    rightSideView(root, result, 0);
+    
+    // Output the result (values visible from the right top to bottom)
+    std::cout << "Result (values visible from the right side top to bottom): ";
+    for (int num : result) {
+        std::cout << num << " ";
+    }
+    std::cout << std::endl;
+    
+    return 0;
+}
