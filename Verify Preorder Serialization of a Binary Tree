@@ -1,0 +1,54 @@
+#include <iostream>
+#include <stack>
+#include <string>
+
+using namespace std;
+
+bool isValidSerialization(string preorder) {
+    if (preorder.empty()) return true;
+    
+    stack<string> nodes;
+    size_t pos = 0;
+    
+    while (pos < preorder.size()) {
+        // Find the next node value or #
+        size_t comma_pos = preorder.find(',', pos);
+        string node = preorder.substr(pos, comma_pos - pos);
+        pos = comma_pos == string::npos ? preorder.size() : comma_pos + 1;
+        
+        nodes.push(node);
+        
+        // Check if we have a pattern of "#,#"
+        while (nodes.size() >= 3 && nodes.top() == "#" && nodes.size() > 1) {
+            nodes.pop(); // pop the #
+            if (nodes.top() == "#") {
+                nodes.pop(); // pop the second #
+                if (nodes.top() == "#") {
+                    return false; // consecutive #'s found
+                }
+                nodes.push("#"); // replace with single #
+            } else {
+                nodes.push("#"); // if not consecutive #'s, push back the current node
+                break;
+            }
+        }
+    }
+    
+    return nodes.size() == 1 && nodes.top() == "#";
+}
+
+int main() {
+    string preorder;
+    cout << "Enter the preorder traversal string: ";
+    getline(cin, preorder);
+    
+    bool result = isValidSerialization(preorder);
+    
+    if (result) {
+        cout << "Output: true\n";
+    } else {
+        cout << "Output: false\n";
+    }
+    
+    return 0;
+}
