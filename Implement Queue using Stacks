@@ -1,0 +1,89 @@
+#include <iostream>
+#include <stack>
+
+using namespace std;
+
+class MyQueue {
+private:
+    stack<int> stack1, stack2;
+
+    void transferStacks() {
+        while (!stack1.empty()) {
+            stack2.push(stack1.top());
+            stack1.pop();
+        }
+    }
+
+public:
+    MyQueue() {}
+
+    void push(int x) {
+        stack1.push(x);
+    }
+
+    int pop() {
+        if (stack2.empty()) {
+            transferStacks();
+        }
+        int topVal = stack2.top();
+        stack2.pop();
+        return topVal;
+    }
+
+    int peek() {
+        if (stack2.empty()) {
+            transferStacks();
+        }
+        return stack2.top();
+    }
+
+    bool empty() {
+        return stack1.empty() && stack2.empty();
+    }
+};
+
+int main() {
+    MyQueue myQueue;
+    int choice, value;
+
+    while (true) {
+        cout << "1. Push\n2. Pop\n3. Peek\n4. Check if empty\n5. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter value to push: ";
+                cin >> value;
+                myQueue.push(value);
+                break;
+            case 2:
+                if (!myQueue.empty()) {
+                    cout << "Popped value: " << myQueue.pop() << endl;
+                } else {
+                    cout << "Queue is empty\n";
+                }
+                break;
+            case 3:
+                if (!myQueue.empty()) {
+                    cout << "Front value: " << myQueue.peek() << endl;
+                } else {
+                    cout << "Queue is empty\n";
+                }
+                break;
+            case 4:
+                if (myQueue.empty()) {
+                    cout << "Queue is empty\n";
+                } else {
+                    cout << "Queue is not empty\n";
+                }
+                break;
+            case 5:
+                return 0;
+            default:
+                cout << "Invalid choice. Try again.\n";
+        }
+    }
+
+    return 0;
+}
